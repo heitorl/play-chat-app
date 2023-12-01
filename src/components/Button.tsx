@@ -6,7 +6,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const Button: React.FC<ButtonProps> = ({ children, whiteSchema, ...rest }) => {
-  const buttonClasses = `transition duration-500 ease-in-out h-12 rounded-lg border-2 px-4 border-black text-bold ${
+  const buttonClasses = `w-full transition duration-500 ease-in-out h-12 rounded-lg border-2 px-4 border-black text-bold ${
     whiteSchema ? "bg-zinc-200 text-black" : "bg-zinc-800 text-zinc-200"
   }`;
 

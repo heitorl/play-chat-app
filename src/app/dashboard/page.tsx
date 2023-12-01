@@ -1,10 +1,14 @@
-import Input from "@/components/Input";
+import InputMessage from "@/components/Input";
 
 const Dashboard = () => {
   return (
     <div className="flex h-screen">
       <div className="w-[350px] bg-zinc-900 p-4 !important">
         <h2 className="text-lg text-white font-semibold mb-4">Novo Chat</h2>
+        <div className="flex flex-col w-full text-gray-200">
+          <span>Heitor L</span>
+          <span>Heitorl@email.com</span>
+        </div>
       </div>
 
       <div className="flex w-full items-center justify-between flex-col bg-gray-200 p-4">
@@ -12,7 +16,7 @@ const Dashboard = () => {
           Mensagens
         </h2>
         <div className="w-[80%] h-[80%]"></div>
-        <Input />
+        <InputMessage />
       </div>
     </div>
   );

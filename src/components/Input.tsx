@@ -1,15 +1,31 @@
-import { LuSendHorizonal } from "react-icons/lu";
+import React from "react";
+import { IconType } from "react-icons";
+import { UseFormRegister } from "react-hook-form";
 
-const Input = () => {
+interface InputProps {
+  label: string;
+  icon?: IconType;
+  register?: UseFormRegister<any>;
+  name: string;
+  error?: string;
+}
+
+const Input: React.FC<
+  InputProps & React.InputHTMLAttributes<HTMLInputElement>
+> = ({ label, icon: Icon, register, name, error, ...rest }) => {
   return (
-    <div className="w-[80%] p-4 flex justify-center">
-      <div className="w-full h-20 flex justify-end bg-white relative items-center  rounded-md">
+    <div className="text-left">
+      <div>
+        {label} {!!error && <span> - {error}</span>}
+      </div>
+
+      <div className="bg-white text-black w-full flex transition-[0.5s] py-4 rounded-[10px] border-2 border-solid border-[#A9A9A9]">
+        {Icon && <Icon size={30} className="px-1" />}
         <input
-          type="text"
-          className="w-full h-20 p-2 flex-1 border-gray-300 focus:outline-orange-500"
-          placeholder="Digite sua mensagem..."
+          className="flex-1 items-center text-black border-0 bg-transparent focus:outline-none"
+          {...(register && register(name))}
+          {...rest}
         />
-        <LuSendHorizonal className="absolute text-2xl cursor-pointer transform -translate-y-1/2 mt-[25px] mb-0 mx-5" />
       </div>
     </div>
   );

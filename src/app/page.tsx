@@ -1,6 +1,10 @@
+"use client";
 import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <main className="flex items-center justify-center w-full min-h-screen bg-#fff7ed">
       <div className="flex flex-col items-center w-5/12">
@@ -9,8 +13,10 @@ export default function Home() {
           nosso espaço de chat.
         </h1>
         <div className="flex justify-center mt-5 space-x-4">
-          <Button whiteSchema>CADASTRAR</Button>
-          <Button>ENTRAR</Button>
+          <Button whiteSchema onClick={() => router.push("/signup")}>
+            CADASTRAR
+          </Button>
+          <Button onClick={() => router.push("/signin")}>ENTRAR</Button>
         </div>
       </div>
     </main>
