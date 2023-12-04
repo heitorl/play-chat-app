@@ -1,7 +1,7 @@
 "use client";
 import { api } from "@/api";
 
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Cookie from "js-cookie";
 
@@ -35,6 +35,33 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     access_token: "",
     user: {} as UserType,
   });
+
+  useEffect(() => {
+    const token = localStorage.getItem("@TOKEN");
+
+    const autoLoginUser = async () => {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const response = await api.get(`/user`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("responsell", response);
+        setData((prevData) => ({
+          access_token: token || "",
+          user: response.data,
+        }));
+
+        // navigate(pathname);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    autoLoginUser();
+  }, []);
 
   const registerUser = async (formData: UserFormData) => {
     try {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export default function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
-  console.log(token);
+
   const signinUrl = new URL("/signin", request.url);
   const dashboardUrl = new URL("/dashboard", request.url);
 

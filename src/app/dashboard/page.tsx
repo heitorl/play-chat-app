@@ -1,6 +1,6 @@
 "use client";
 import { UserContext } from "@/providers/userContext";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { Suspense, useCallback, useContext, useEffect, useState } from "react";
 import InputMessage from "@/components/InputMessage";
 import io, { Socket } from "socket.io-client";
 
