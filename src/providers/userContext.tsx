@@ -13,7 +13,7 @@ export type UserFormData = {
 
 type UserContextProps = {
   registerUser: (formData: UserFormData) => Promise<void>;
-  loginUser: (formData: UserFormData) => Promise<UserType>;
+  loginUser: (formData: UserFormData) => Promise<void>;
   user: UserType;
 };
 
@@ -61,7 +61,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       localStorage.setItem("@TOKEN", access_token);
       toast.success("Login bem-sucedido! Bem-vindo ao seu painel.");
-      return user;
     } catch (error) {
       toast.error(
         "Login error. Por favor check suas credenciais e tente novamente."

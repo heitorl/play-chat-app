@@ -39,11 +39,11 @@ const Signin = () => {
 
   const onSubmitFunction = async (data: UserFormData) => {
     try {
-      const response = await loginUser(data);
-      console.log(response, "res signin");
-      if (response) {
-        router.push("/dashboard");
-      }
+      await loginUser(data);
+
+      console.log("log siginin");
+
+      router.push("/dashboard");
     } catch (err) {
       console.log(err);
     }
