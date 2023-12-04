@@ -1,50 +1,54 @@
-import { yupResolver } from "@hookform/resolvers/yup";
+"use client";
+
 import Button from "./Button";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { createValidationSchemaUtil } from "@/utils/createValidationForm.schema";
-import * as yup from "yup";
+
 import Input from "./Input";
 import { IconType } from "react-icons";
+import { FC } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface FormData {
-  [key: string]: any;
+interface IFormInput {
+  name: string;
+  email: string;
+  password: string;
 }
 
 export interface InputType {
   name: string;
-  validation: () => yup.AnySchema;
-  icon: IconType;
+  validation: z.ZodType<any, any, any>;
+  icon?: IconType;
   label: string;
   placeholder: string;
   type: string;
 }
-
 interface FormProps {
-  onSubmit: SubmitHandler<FormData>;
+  onSubmit: SubmitHandler<IFormInput>;
   inputs: InputType[];
 }
 
-const Form: React.FC<FormProps> = ({ onSubmit, inputs }) => {
-  const schema = createValidationSchemaUtil(inputs);
+const Form: FC<FormProps> = ({ onSubmit, inputs }) => {
+  const validationSchema = z.object(
+    inputs.reduce((acc, input) => {
+      acc[input.name] = input.validation;
+      return acc;
+    }, {} as Record<string, z.ZodType<any, any, any>>)
+  );
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
+  } = useForm<IFormInput>({
+    resolver: zodResolver(validationSchema),
   });
-
-  const onSubmitFunction: SubmitHandler<FormData> = async (data) => {
-    await onSubmit(data);
-    reset();
-  };
 
   return (
     <form
       className="w-[340px] flex flex-col items-center text-center"
-      onSubmit={handleSubmit(onSubmitFunction)}
+      onSubmit={handleSubmit(onSubmit)}
     >
       {inputs.map((input, index) => (
         <Input

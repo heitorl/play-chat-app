@@ -16,13 +16,13 @@ const Input: React.FC<
   return (
     <div className="text-left">
       <div>
-        {label} {!!error && <span> - {error}</span>}
+        {label} {!!error && <span className="text-red-400"> - {error}</span>}
       </div>
 
-      <div className="bg-white text-black w-full flex transition-[0.5s] py-4 rounded-[10px] border-2 border-solid border-[#A9A9A9]">
+      <div className="bg-white text-black w-full flex py-4 rounded-[10px] border-2 border-solid border-[#A9A9A9] focus:outline-orange-500">
         {Icon && <Icon size={30} className="px-1" />}
         <input
-          className="flex-1 items-center text-black border-0 bg-transparent focus:outline-none"
+          className="items-center text-black border-0 bg-transparent focus:outline-none"
           {...(register && register(name))}
           {...rest}
         />

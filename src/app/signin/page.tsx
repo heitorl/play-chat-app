@@ -1,4 +1,5 @@
 "use client";
+
 import { FiLock, FiMail, FiUser } from "react-icons/fi";
 import Link from "next/link";
 import { useContext } from "react";
@@ -8,16 +9,6 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 
 const inputs: InputType[] = [
-  {
-    name: "name",
-    validation: z
-      .string()
-      .refine((value) => !!value, { message: "Campo obrigatório!" }),
-    icon: FiUser,
-    label: "Nome",
-    placeholder: "Digite seu nome",
-    type: "text",
-  },
   {
     name: "email",
     validation: z
@@ -41,23 +32,29 @@ const inputs: InputType[] = [
     type: "password",
   },
 ];
-const Signup = () => {
-  const { registerUser } = useContext(UserContext);
+const Signin = () => {
+  const { loginUser } = useContext(UserContext);
 
   const router = useRouter();
 
   const onSubmitFunction = async (data: UserFormData) => {
-    console.log(data, "dddddddd");
-    await registerUser(data);
-    router.push("/");
+    try {
+      const response = await loginUser(data);
+      console.log(response, "res signin");
+      if (response) {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <main className="w-full h-screen flex">
-      <div className="flex-1 bg-[50%] bg-zinc-800"></div>
-
       <div className="flex flex-col items-center justify-center w-full max-w-[800px]">
-        <h1 className="text-4xl">Cadastro</h1>
+        <div className="w-[340px] text-center text-5xl pb-4">
+          <h1 className="text-5xl">Entre com a sua conta</h1>
+        </div>
 
         <Form onSubmit={onSubmitFunction} inputs={inputs} />
         <p>
@@ -67,8 +64,9 @@ const Signup = () => {
           </Link>
         </p>
       </div>
+      <div className="flex-1 bg-[50%] bg-zinc-800"></div>
     </main>
   );
 };
 
-export default Signup;
+export default Signin;
