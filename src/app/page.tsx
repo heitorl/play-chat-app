@@ -12,6 +12,7 @@ export default function Home() {
           Troque risadas, compartilhe histórias, faça novos amigos: bem-vindo ao
           nosso espaço de chat.
         </h1>
+
         <div className="flex justify-center mt-5 space-x-4">
           <Button whiteSchema onClick={() => router.push("/signup")}>
             CADASTRAR

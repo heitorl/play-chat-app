@@ -17,6 +17,7 @@ type UserContextProps = {
   loginUser: (formData: UserFormData) => Promise<void>;
   user: UserType;
   getAllMessages: () => Promise<Message[]>;
+  findAllUsers: () => Promise<UserType[]>;
 };
 
 export type UserType = {
@@ -110,6 +111,19 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const findAllUsers = async () => {
+    try {
+      const response = await api.get("/user/all", {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+        },
+      });
+      return response.data;
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -117,6 +131,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         loginUser,
         user: data.user,
         getAllMessages,
+        findAllUsers,
       }}
     >
       {children}

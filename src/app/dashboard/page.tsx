@@ -6,6 +6,7 @@ import io, { Socket } from "socket.io-client";
 import { Message } from "@/components/ChatMessage";
 
 import ChatMessage from "@/components/ChatMessage";
+import Sidebar from "@/components/Sidebar";
 
 const Dashboard = () => {
   const { user, getAllMessages } = useContext(UserContext);
@@ -60,13 +61,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen">
-      <div className="w-[350px] bg-zinc-900 p-4 !important">
-        <h2 className="text-lg text-white font-semibold mb-4">Novo Chat</h2>
-        <div className="flex flex-col w-full text-gray-200">
-          <span>Heitor L</span>
-          <span>Heitorl@email.com</span>
-        </div>
-      </div>
+      <Sidebar />
 
       <div className="flex w-full items-center justify-between flex-col bg-gray-200 p-4">
         <h2 className="text-lg w-full text-left font-semibold mb-4">
