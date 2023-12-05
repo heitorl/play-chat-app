@@ -1,33 +1,16 @@
 "use client";
 import { UserContext } from "@/providers/userContext";
-import { Suspense, useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import InputMessage from "@/components/InputMessage";
 import io, { Socket } from "socket.io-client";
+import { Message } from "@/components/ChatMessage";
 
-type Message = {
-  user: string;
-  content: string;
-  timestamp: Date;
-};
+import ChatMessage from "@/components/ChatMessage";
 
 const Dashboard = () => {
-  const userName = "hector";
+  const { user, getAllMessages } = useContext(UserContext);
   const [messages, setMessages] = useState<Message[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
-
-  const sendMessage = (value: string) => {
-    const newMessage: Message = {
-      user: userName,
-      content: value,
-      timestamp: new Date(),
-    };
-    socket?.emit("sendMessage", newMessage);
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-  };
-
-  const messageListener = useCallback((message: Message) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
-  }, []);
 
   useEffect(() => {
     const newSocket = io("http://localhost:3333");
@@ -37,6 +20,36 @@ const Dashboard = () => {
       newSocket.disconnect();
     };
   }, [setSocket]);
+
+  useEffect(() => {
+    const fetchAllMessages = async () => {
+      try {
+        const allMessages = await getAllMessages();
+        console.log(allMessages, "alll");
+        setMessages(allMessages);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+
+    fetchAllMessages();
+  }, [getAllMessages, setSocket, setMessages]);
+
+  const sendMessage = (value: string) => {
+    const newMessage: Message = {
+      userName: user.name,
+      content: value,
+      timestamp: new Date(),
+    };
+
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    socket?.emit("sendMessage", newMessage);
+  };
+
+  const messageListener = useCallback((message: Message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  }, []);
 
   useEffect(() => {
     socket?.on("sendMessage", messageListener);
@@ -59,24 +72,7 @@ const Dashboard = () => {
         <h2 className="text-lg w-full text-left font-semibold mb-4">
           Mensagens
         </h2>
-        <div className="w-[80%] h-[80%]">
-          {messages &&
-            messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex flex-col p-3 my-3 rounded-md ${
-                  message.user === "hector"
-                    ? "bg-green-100 self-end"
-                    : "bg-white"
-                }`}
-              >
-                <span className="text-lg">{message.content}</span>
-                <span className="text-[14px] text-gray-400">
-                  {message.user}
-                </span>
-              </div>
-            ))}
-        </div>
+        <ChatMessage messages={messages} user={user} />
         <InputMessage sendMessage={sendMessage} />
       </div>
     </div>

@@ -4,6 +4,7 @@ import { api } from "@/api";
 import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Cookie from "js-cookie";
+import { Message } from "@/components/ChatMessage";
 
 export type UserFormData = {
   name?: string;
@@ -15,9 +16,10 @@ type UserContextProps = {
   registerUser: (formData: UserFormData) => Promise<void>;
   loginUser: (formData: UserFormData) => Promise<void>;
   user: UserType;
+  getAllMessages: () => Promise<Message[]>;
 };
 
-type UserType = {
+export type UserType = {
   id: string;
   name: string;
   email: string;
@@ -48,12 +50,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("responsell", response);
         setData((prevData) => ({
           access_token: token || "",
           user: response.data,
         }));
-
         // navigate(pathname);
       } catch (error) {
         console.log(error);
@@ -96,12 +96,27 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const getAllMessages = async () => {
+    try {
+      const response = await api.get("/messages", {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      return [];
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
         registerUser,
         loginUser,
         user: data.user,
+        getAllMessages,
       }}
     >
       {children}
