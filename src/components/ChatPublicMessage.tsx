@@ -1,6 +1,6 @@
-import { UserType } from "@/providers/userContext";
+import { UserContext, UserType } from "@/providers/userContext";
 import { returnFormatedDate } from "@/utils/formatedDate";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 
 export type Message = {
   userName: string;
@@ -10,10 +10,30 @@ export type Message = {
 
 type ChatMessageProps = {
   messages: Message[];
+  setMessages: (messages: Message[]) => void;
   user: UserType;
 };
 
-const chatMessage: React.FC<ChatMessageProps> = ({ messages, user }) => {
+const ChatPublicMessage: React.FC<ChatMessageProps> = ({
+  messages,
+  user,
+  setMessages,
+}) => {
+  const { getAllMessages } = useContext(UserContext);
+
+  useEffect(() => {
+    const fetchAllMessages = async () => {
+      try {
+        const allMessages = await getAllMessages();
+        setMessages(allMessages);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+
+    fetchAllMessages();
+  }, [getAllMessages, setMessages]);
+
   return (
     <div className="flex flex-col w-[78%] h-[80%] overflow-y-auto scrollbar">
       {messages &&
@@ -41,4 +61,4 @@ const chatMessage: React.FC<ChatMessageProps> = ({ messages, user }) => {
   );
 };
 
-export default chatMessage;
+export default ChatPublicMessage;

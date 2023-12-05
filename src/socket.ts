@@ -1,6 +1,21 @@
-// import { io } from "socket.io-client";
+import { useEffect, useState } from "react";
+import { Socket, io } from "socket.io-client";
 
-// const URL = "http://localhost:3000";
-// const socket = io(URL, { autoConnect: false });
+export const useChatConnection = (chatType: string, dependencies = []) => {
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-// export default socket;
+  useEffect(() => {
+    const newSocket = io("http://localhost:3333", {
+      auth: {
+        type: chatType,
+      },
+    });
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [setSocket, chatType, ...dependencies]);
+
+  return socket;
+};

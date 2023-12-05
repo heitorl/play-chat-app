@@ -3,30 +3,23 @@ import { UserContext } from "@/providers/userContext";
 import { useCallback, useContext, useEffect, useState } from "react";
 import InputMessage from "@/components/InputMessage";
 import io, { Socket } from "socket.io-client";
-import { Message } from "@/components/ChatMessage";
 
-import ChatMessage from "@/components/ChatMessage";
 import Sidebar from "@/components/Sidebar";
+import { useChatConnection } from "@/socket";
+import ChatPublicMessage, { Message } from "@/components/ChatPublicMessage";
 
 const Dashboard = () => {
   const { user, getAllMessages } = useContext(UserContext);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+
   const [messages, setMessages] = useState<Message[]>([]);
-  const [socket, setSocket] = useState<Socket | null>(null);
 
-  useEffect(() => {
-    const newSocket = io("http://localhost:3333");
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [setSocket]);
+  const socket = useChatConnection("public");
 
   useEffect(() => {
     const fetchAllMessages = async () => {
       try {
         const allMessages = await getAllMessages();
-        console.log(allMessages, "alll");
         setMessages(allMessages);
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -34,7 +27,7 @@ const Dashboard = () => {
     };
 
     fetchAllMessages();
-  }, [getAllMessages, setSocket, setMessages]);
+  }, [getAllMessages, setMessages]);
 
   const sendMessage = (value: string) => {
     const newMessage: Message = {
@@ -67,7 +60,7 @@ const Dashboard = () => {
         <h2 className="text-lg w-full text-left font-semibold mb-4">
           Mensagens
         </h2>
-        <ChatMessage messages={messages} user={user} />
+        {isPublic && <ChatPublicMessage messages={messages} user={user} />}
         <InputMessage sendMessage={sendMessage} />
       </div>
     </div>

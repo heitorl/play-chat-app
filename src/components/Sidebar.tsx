@@ -1,6 +1,7 @@
 import { UserContext, UserType } from "@/providers/userContext";
 import UserAutoComplete from "./userAutoComplete";
 import { useContext, useEffect, useState } from "react";
+import { useChatConnection } from "@/socket";
 
 const Sidebar = () => {
   const { findAllUsers } = useContext(UserContext);
@@ -9,12 +10,6 @@ const Sidebar = () => {
 
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
 
-  // Função para lidar com a seleção de usuários
-  const handleUserSelect = (user: UserType | null) => {
-    // Fazer algo com o usuário selecionado, como navegar para uma página
-    // Neste exemplo, apenas definimos o usuário selecionado no estado
-    setSelectedUser(user);
-  };
   useEffect(() => {
     const findAllUser = async () => {
       const users = await findAllUsers();
@@ -23,6 +18,12 @@ const Sidebar = () => {
     };
     findAllUser();
   }, []);
+
+  const handleUserSelect = (user: UserType | null) => {
+    setSelectedUser(user);
+
+    const socket = useChatConnection("private");
+  };
 
   return (
     <div className="w-[350px] bg-zinc-900 p-4 !important">
