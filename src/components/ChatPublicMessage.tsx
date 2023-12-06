@@ -6,6 +6,7 @@ export type Message = {
   userName: string;
   content: string;
   timestamp: Date;
+  toUser: UserType | null;
 };
 
 type ChatMessageProps = {

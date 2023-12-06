@@ -1,66 +1,77 @@
 "use client";
-import { UserContext } from "@/providers/userContext";
+import { Message, UserContext, UserType } from "@/providers/userContext";
 import { useCallback, useContext, useEffect, useState } from "react";
 import InputMessage from "@/components/InputMessage";
 import io, { Socket } from "socket.io-client";
 
 import Sidebar from "@/components/Sidebar";
-import { useChatConnection } from "@/socket";
-import ChatPublicMessage, { Message } from "@/components/ChatPublicMessage";
+import ChatPublicMessage from "@/components/ChatPublicMessage";
+import ChatPrivateMessage from "@/components/ChatPrivateMessage";
 
 const Dashboard = () => {
   const { user, getAllMessages } = useContext(UserContext);
   const [isPublic, setIsPublic] = useState<boolean>(true);
-
+  const [chatType, setChatType] = useState<string>("public");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-  const socket = useChatConnection("public");
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
 
   useEffect(() => {
-    const fetchAllMessages = async () => {
-      try {
-        const allMessages = await getAllMessages();
-        setMessages(allMessages);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    };
+    const newSocket = io("http://localhost:3333", {
+      auth: {
+        type: chatType,
+        userId: user.id,
+      },
+    });
+    setSocket(newSocket);
 
-    fetchAllMessages();
-  }, [getAllMessages, setMessages]);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [setSocket, chatType]);
 
   const sendMessage = (value: string) => {
+    console.log(selectedUser, "user do sendMessage");
     const newMessage: Message = {
       userName: user.name,
       content: value,
       timestamp: new Date(),
+      toUser: selectedUser,
     };
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
 
-    socket?.emit("sendMessage", newMessage);
+    const event =
+      chatType === "public" ? "sendPublicMessage" : "sendPrivateMessage";
+    socket?.emit(event, newMessage);
   };
-
-  const messageListener = useCallback((message: Message) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
-  }, []);
-
-  useEffect(() => {
-    socket?.on("sendMessage", messageListener);
-    return () => {
-      socket?.off("sendMessage", messageListener);
-    };
-  }, [socket, messageListener]);
 
   return (
     <div className="flex h-screen">
-      <Sidebar />
+      <Sidebar
+        setIsPublic={setIsPublic}
+        setChatType={setChatType}
+        setSelectedUser={setSelectedUser}
+      />
 
       <div className="flex w-full items-center justify-between flex-col bg-gray-200 p-4">
         <h2 className="text-lg w-full text-left font-semibold mb-4">
           Mensagens
         </h2>
-        {isPublic && <ChatPublicMessage messages={messages} user={user} />}
+        {isPublic ? (
+          <ChatPublicMessage
+            messages={messages}
+            setMessages={setMessages}
+            user={user}
+          />
+        ) : (
+          <ChatPrivateMessage
+            messages={messages}
+            setMessages={setMessages}
+            selectedUser={selectedUser}
+          />
+        )}
         <InputMessage sendMessage={sendMessage} />
       </div>
     </div>

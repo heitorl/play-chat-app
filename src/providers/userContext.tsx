@@ -1,15 +1,23 @@
 "use client";
 import { api } from "@/api";
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import toast from "react-hot-toast";
 import Cookie from "js-cookie";
-import { Message } from "@/components/ChatMessage";
 
 export type UserFormData = {
   name?: string;
   email: string;
   password: string;
+};
+
+export type Message = {
+  userName?: string;
+  content: string;
+  timestamp: Date;
+  toUser?: UserType | null;
+  fromUserId?: string;
+  toUserId?: string;
 };
 
 type UserContextProps = {
@@ -18,6 +26,7 @@ type UserContextProps = {
   user: UserType;
   getAllMessages: () => Promise<Message[]>;
   findAllUsers: () => Promise<UserType[]>;
+  getPrivateMessages: (userId1: string, userId2: string) => Promise<Message[]>;
 };
 
 export type UserType = {
@@ -39,30 +48,30 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     user: {} as UserType,
   });
 
-  useEffect(() => {
-    const token = localStorage.getItem("@TOKEN");
+  // useEffect(() => {
+  //   const token = localStorage.getItem("@TOKEN");
 
-    const autoLoginUser = async () => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+  //   const autoLoginUser = async () => {
+  //     try {
+  //       await new Promise((resolve) => setTimeout(resolve, 500));
 
-        const response = await api.get(`/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setData((prevData) => ({
-          access_token: token || "",
-          user: response.data,
-        }));
-        // navigate(pathname);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  //       const response = await api.get(`/user`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       setData((prevData) => ({
+  //         access_token: token || "",
+  //         user: response.data,
+  //       }));
+  //       // navigate(pathname);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    autoLoginUser();
-  }, []);
+  //   autoLoginUser();
+  // }, []);
 
   const registerUser = async (formData: UserFormData) => {
     try {
@@ -111,6 +120,23 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const getPrivateMessages = async (userId1: string, userId2: string) => {
+    try {
+      const response = await api.get(
+        `/private-messages/${userId1}/${userId2}`,
+        {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      return [];
+    }
+  };
+
   const findAllUsers = async () => {
     try {
       const response = await api.get("/user/all", {
@@ -132,6 +158,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         user: data.user,
         getAllMessages,
         findAllUsers,
+        getPrivateMessages,
       }}
     >
       {children}

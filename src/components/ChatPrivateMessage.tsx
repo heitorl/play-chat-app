@@ -1,19 +1,40 @@
-import { UserType } from "@/providers/userContext";
+import { Message, UserContext, UserType } from "@/providers/userContext";
 import { returnFormatedDate } from "@/utils/formatedDate";
-import React from "react";
-
-export type Message = {
-  userName: string;
-  content: string;
-  timestamp: Date;
-};
+import React, { useContext, useEffect } from "react";
 
 type ChatMessageProps = {
   messages: Message[];
-  user: UserType;
+  setMessages: (messages: Message[]) => void;
+  selectedUser: UserType | null;
 };
 
-const ChatPrivateMessage: React.FC<ChatMessageProps> = ({ messages, user }) => {
+const ChatPrivateMessage: React.FC<ChatMessageProps> = ({
+  messages,
+  setMessages,
+  selectedUser,
+}) => {
+  const { getPrivateMessages, user } = useContext(UserContext);
+
+  useEffect(() => {
+    const fetchAllMessages = async () => {
+      try {
+        if (selectedUser) {
+          const privateMessages = await getPrivateMessages(
+            user.id,
+            selectedUser.id
+          );
+          setMessages(privateMessages);
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+
+    fetchAllMessages();
+  }, [getPrivateMessages, setMessages]);
+
+  console.log(messages, "okok");
+
   return (
     <div className="flex flex-col w-[78%] h-[80%] overflow-y-auto scrollbar">
       {messages &&
