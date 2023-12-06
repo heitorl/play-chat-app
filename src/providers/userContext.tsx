@@ -88,9 +88,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const loginUser = async (formData: UserFormData) => {
     try {
-      console.log("Ent");
       const response = await api.post("/login", formData);
-      console.log(response, " responseee");
+
       const { access_token, user } = response.data;
 
       setData({ access_token, user });

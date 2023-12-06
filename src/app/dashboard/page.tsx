@@ -25,6 +25,12 @@ const Dashboard = () => {
       },
     });
     setSocket(newSocket);
+    const event =
+      chatType === "public" ? "sendPublicMessage" : "sendPrivateMessage";
+
+    newSocket.on(event, (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
 
     return () => {
       newSocket.disconnect();
@@ -44,6 +50,7 @@ const Dashboard = () => {
 
     const event =
       chatType === "public" ? "sendPublicMessage" : "sendPrivateMessage";
+
     socket?.emit(event, newMessage);
   };
 

@@ -41,8 +41,6 @@ const Signin = () => {
     try {
       await loginUser(data);
 
-      console.log("log siginin");
-
       router.push("/dashboard");
     } catch (err) {
       console.log(err);

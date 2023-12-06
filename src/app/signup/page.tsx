@@ -47,7 +47,6 @@ const Signup = () => {
   const router = useRouter();
 
   const onSubmitFunction = async (data: UserFormData) => {
-    console.log(data, "dddddddd");
     await registerUser(data);
     router.push("/");
   };

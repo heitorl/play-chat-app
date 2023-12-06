@@ -1,13 +1,8 @@
-import { UserContext, UserType } from "@/providers/userContext";
+import { Message, UserContext, UserType } from "@/providers/userContext";
 import { returnFormatedDate } from "@/utils/formatedDate";
 import React, { useContext, useEffect } from "react";
 
-export type Message = {
-  userName: string;
-  content: string;
-  timestamp: Date;
-  toUser: UserType | null;
-};
+
 
 type ChatMessageProps = {
   messages: Message[];

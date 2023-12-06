@@ -33,8 +33,6 @@ const ChatPrivateMessage: React.FC<ChatMessageProps> = ({
     fetchAllMessages();
   }, [getPrivateMessages, setMessages]);
 
-  console.log(messages, "okok");
-
   return (
     <div className="flex flex-col w-[78%] h-[80%] overflow-y-auto scrollbar">
       {messages &&
