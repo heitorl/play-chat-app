@@ -1,9 +1,10 @@
 "use client";
 import { api } from "@/api";
 
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Cookie from "js-cookie";
+import { UploadedFile } from "@/components/UploadAvatarModal";
 
 export type UserFormData = {
   name?: string;
@@ -27,13 +28,30 @@ type UserContextProps = {
   getAllMessages: () => Promise<Message[]>;
   findAllUsers: () => Promise<UserType[]>;
   getPrivateMessages: (userId1: string, userId2: string) => Promise<Message[]>;
+  getUserAvatar: (userId: string) => Promise<string>;
+  userLogout: () => void;
+  requestAvatarUpload: (file: Partial<UploadedFile>) => Promise<void>;
+  setImageUploaded: (data: any) => void;
+  imageUploaded: any;
 };
 
 export type UserType = {
   id: string;
   name: string;
   email: string;
+  filename: string | null;
+  userWithAvatar: AvatarInfo | null;
 };
+
+interface AvatarInfo {
+  src: string;
+  height: number;
+  width: number;
+  blurDataURL: string;
+  blurWidth: number;
+  blurHeight: number;
+  avatarUrl?: string;
+}
 
 interface UserData {
   access_token: string;
@@ -47,31 +65,28 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     access_token: "",
     user: {} as UserType,
   });
+  const [imageUploaded, setImageUploaded] = useState({});
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("@TOKEN");
+  useEffect(() => {
+    const token = localStorage.getItem("@TOKEN");
 
-  //   const autoLoginUser = async () => {
-  //     try {
-  //       await new Promise((resolve) => setTimeout(resolve, 500));
+    const autoLoginUser = async () => {
+      try {
+        if (token) {
+          const response = await api.get(`/user`);
 
-  //       const response = await api.get(`/user`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       setData((prevData) => ({
-  //         access_token: token || "",
-  //         user: response.data,
-  //       }));
-  //       // navigate(pathname);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
+          setData((prevData) => ({
+            access_token: token,
+            user: response.data,
+          }));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  //   autoLoginUser();
-  // }, []);
+    autoLoginUser();
+  }, []);
 
   const registerUser = async (formData: UserFormData) => {
     try {
@@ -107,11 +122,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getAllMessages = async () => {
     try {
-      const response = await api.get("/messages", {
-        headers: {
-          Authorization: `Bearer ${data.access_token}`,
-        },
-      });
+      const response = await api.get("/messages");
       return response.data;
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -121,14 +132,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getPrivateMessages = async (userId1: string, userId2: string) => {
     try {
-      const response = await api.get(
-        `/private-messages/${userId1}/${userId2}`,
-        {
-          headers: {
-            Authorization: `Bearer ${data.access_token}`,
-          },
-        }
-      );
+      const response = await api.get(`/private-messages/${userId1}/${userId2}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -136,13 +140,59 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const findAllUsers = async () => {
+  const getUserAvatar = async (userId: string) => {
     try {
-      const response = await api.get("/user/all", {
-        headers: {
-          Authorization: `Bearer ${data.access_token}`,
+      const response = await api.get(`upload/avatar/${userId}`);
+
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const updateFile = (data: any) => {
+    setImageUploaded((prevData) => ({ ...prevData, ...data }));
+  };
+
+  const requestAvatarUpload = async (file: Partial<UploadedFile>) => {
+    try {
+      const response = await api.patch(`upload/${data.user.id}`, file, {
+        onUploadProgress: (event: any) => {
+          const progress = Math.round(
+            (event.loaded * 100) / event.total
+          ).toString();
+          updateFile({ progress });
         },
       });
+
+      updateFile({
+        uploaded: true,
+        url: response.data,
+      });
+
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+      updateFile({
+        error: true,
+      });
+    }
+  };
+
+  const userLogout = () => {
+    setData({
+      access_token: "",
+      user: {} as UserType,
+    });
+    localStorage.clear();
+    Cookie.remove("token");
+    toast.success("Logout bem-sucedido. Até a próxima!");
+    window.location.reload();
+  };
+
+  const findAllUsers = async () => {
+    try {
+      const response = await api.get("/user/all");
       return response.data;
     } catch (err) {
       console.error("Error fetching users:", err);
@@ -158,6 +208,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         getAllMessages,
         findAllUsers,
         getPrivateMessages,
+        getUserAvatar,
+        userLogout,
+        requestAvatarUpload,
+        setImageUploaded,
+        imageUploaded,
       }}
     >
       {children}

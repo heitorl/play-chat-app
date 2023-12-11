@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { UserType } from "@/providers/userContext";
 
@@ -11,6 +12,8 @@ const UserAutoComplete: React.FC<UserAutoCompleteProps> = ({
   allUsers,
   onSelect,
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
+
   const handleSelectUser = (
     selectedOption: { value: string; label: string } | null
   ) => {
@@ -37,7 +40,9 @@ const UserAutoComplete: React.FC<UserAutoCompleteProps> = ({
     }),
   };
 
-  return (
+  useEffect(() => setIsMounted(true), []);
+
+  return isMounted ? (
     <Select
       className="text-gray-600"
       styles={customStyles}
@@ -46,7 +51,7 @@ const UserAutoComplete: React.FC<UserAutoCompleteProps> = ({
       isSearchable
       placeholder="Busque um usuário"
     />
-  );
+  ) : null;
 };
 
 export default UserAutoComplete;

@@ -8,7 +8,10 @@ export default function Home() {
   return (
     <main className="flex items-center justify-center w-full min-h-screen bg-#fff7ed">
       <div className="flex flex-col items-center w-5/12">
-        <h1 className="text-3xl text-center">
+        <h1 className="text-7xl">
+          Play<span className="text-5xl text-orange-500">.</span>chat
+        </h1>
+        <h1 className="text-3xl text-center pt-4">
           Troque risadas, compartilhe histórias, faça novos amigos: bem-vindo ao
           nosso espaço de chat.
         </h1>

@@ -1,6 +1,6 @@
 "use client";
 
-import { FiLock, FiMail, FiUser } from "react-icons/fi";
+import { FiLock, FiMail } from "react-icons/fi";
 import Link from "next/link";
 import { useContext } from "react";
 import { UserContext, UserFormData } from "@/providers/userContext";
@@ -56,9 +56,9 @@ const Signin = () => {
 
         <Form onSubmit={onSubmitFunction} inputs={inputs} />
         <p>
-          Já tem uma conta? Faça o{" "}
-          <Link className="text-orange-500" href="/signin">
-            Login
+          Não tem uma conta? Faça o{" "}
+          <Link className="text-orange-500" href="/signup">
+            Cadastro
           </Link>
         </p>
       </div>

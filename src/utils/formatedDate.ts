@@ -1,6 +1,8 @@
 import { formatDistanceToNow, format } from "date-fns";
 
 export const returnFormatedDate = (time: Date) => {
+  if (!time) return;
+
   const parsedTimestamp = new Date(time);
   const now = new Date();
 

@@ -2,8 +2,6 @@ import { Message, UserContext, UserType } from "@/providers/userContext";
 import { returnFormatedDate } from "@/utils/formatedDate";
 import React, { useContext, useEffect } from "react";
 
-
-
 type ChatMessageProps = {
   messages: Message[];
   setMessages: (messages: Message[]) => void;
@@ -31,7 +29,7 @@ const ChatPublicMessage: React.FC<ChatMessageProps> = ({
   }, [getAllMessages, setMessages]);
 
   return (
-    <div className="flex flex-col w-[78%] h-[80%] overflow-y-auto scrollbar">
+    <div className="flex flex-col w-[78%] h-[80%] overflow-y-auto scrollbar fade-in-down">
       {messages &&
         messages.map((message, index) => (
           <div

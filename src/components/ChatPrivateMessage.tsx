@@ -23,6 +23,7 @@ const ChatPrivateMessage: React.FC<ChatMessageProps> = ({
             user.id,
             selectedUser.id
           );
+
           setMessages(privateMessages);
         }
       } catch (error) {
@@ -31,10 +32,10 @@ const ChatPrivateMessage: React.FC<ChatMessageProps> = ({
     };
 
     fetchAllMessages();
-  }, [getPrivateMessages, setMessages]);
+  }, [getPrivateMessages, setMessages, selectedUser]);
 
   return (
-    <div className="flex flex-col w-[78%] h-[80%] overflow-y-auto scrollbar">
+    <div className="flex flex-col w-[78%] h-[80%] overflow-y-auto scrollbar fade-in-down">
       {messages &&
         messages.map((message, index) => (
           <div
