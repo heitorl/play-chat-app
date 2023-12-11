@@ -30,7 +30,7 @@ type UserContextProps = {
   getPrivateMessages: (userId1: string, userId2: string) => Promise<Message[]>;
   getUserAvatar: (userId: string) => Promise<string>;
   userLogout: () => void;
-  requestAvatarUpload: (file: Partial<UploadedFile>) => Promise<void>;
+  requestAvatarUpload: (file: FormData) => Promise<void>;
   setImageUploaded: (data: any) => void;
   imageUploaded: any;
 };
@@ -154,7 +154,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setImageUploaded((prevData) => ({ ...prevData, ...data }));
   };
 
-  const requestAvatarUpload = async (file: Partial<UploadedFile>) => {
+  const requestAvatarUpload = async (file: FormData) => {
     try {
       const response = await api.patch(`upload/${data.user.id}`, file, {
         onUploadProgress: (event: any) => {

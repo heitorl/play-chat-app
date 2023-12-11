@@ -14,13 +14,13 @@ interface UpdateAvatarModalProps {
 
 export interface UploadedFile {
   file: File;
-  name: string;
-  readableSize: string;
-  preview: string;
-  progress: number;
-  uploaded: boolean;
-  error: boolean;
-  url: string | null;
+  name?: string;
+  readableSize?: string;
+  preview?: string;
+  progress?: number;
+  uploaded?: boolean;
+  error?: boolean;
+  url?: string | null;
 }
 
 const UpdloadAvatar = () => {
@@ -30,7 +30,7 @@ const UpdloadAvatar = () => {
 
   const onDropAccepted = (acceptedFiles: any) => {
     const imageFile = acceptedFiles.filter(
-      (file) =>
+      (file: File) =>
         file.type === "image/png" ||
         file.type === "image/jpeg" ||
         file.type === "image/jpg"
