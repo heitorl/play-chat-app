@@ -10,14 +10,16 @@ import ChatPrivateMessage from "@/components/ChatPrivateMessage";
 import { useModal } from "@/utils/useModalSchema";
 import Backdrop from "@/components/Backdrop";
 import UpdloadAvatar from "@/components/UploadAvatarModal";
+import Image from "next/image";
 
 const Dashboard = () => {
-  const { user, getAllMessages } = useContext(UserContext);
+  const { user, getAllMessages, getUserAvatar } = useContext(UserContext);
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [chatType, setChatType] = useState<string>("public");
   const [messages, setMessages] = useState<Message[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+  const [userSelectAvatar, setUserSelectAvatar] = useState<string | any>("");
   const { isModalOpen, openModal } = useModal();
 
   useEffect(() => {
@@ -58,6 +60,21 @@ const Dashboard = () => {
 
     socket?.emit(event, newMessage);
   };
+
+  useEffect(() => {
+    async function fetchAvatar() {
+      try {
+        if (selectedUser) {
+          const response = await getUserAvatar(selectedUser.id);
+          setUserSelectAvatar(response);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchAvatar();
+  }, [selectedUser]);
+
   return (
     <div className="flex h-screen">
       <Sidebar
@@ -70,9 +87,23 @@ const Dashboard = () => {
         {isModalOpen && <UpdloadAvatar />}
       </div>
       <div className="flex w-full items-center justify-between flex-col bg-gray-200 p-4">
-        <h2 className="text-lg w-full text-left font-semibold mb-4">
-          Mensagens
-        </h2>
+        <div className="flex w-full px-16 justify-end items-center">
+          {userSelectAvatar && chatType == "private" && (
+            <div className="relative w-[40px] h-[40px] mr-4">
+              <Image
+                className="w-full rounded-full cursor-pointer object-cover"
+                fill
+                quality={100}
+                src={userSelectAvatar.avatarUrl}
+                alt="urlavatar"
+              />
+            </div>
+          )}
+          <h2 className="text-lg font-semibold">
+            {selectedUser ? selectedUser?.name : "Mensagens"}
+          </h2>
+        </div>
+
         {isPublic ? (
           <ChatPublicMessage
             messages={messages}

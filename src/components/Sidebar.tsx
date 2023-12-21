@@ -66,7 +66,7 @@ const Sidebar: FC<SidebarProps> = ({
   };
 
   return (
-    <div className="w-[350px] bg-zinc-900 p-4 !important h-full">
+    <div className="w-[350px] bg-zinc-900 p-4 !important hidden lg:block h-full">
       {/* <h2 className="text-lg text-white font-semibold mb-4">Novo Chat</h2> */}
       <div className="flex flex-col w-full text-gray-200">
         <div className="flex pl-4 pt-2">
