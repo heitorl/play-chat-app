@@ -1,5 +1,6 @@
 import { Message, UserContext, UserType } from "@/providers/userContext";
 import { returnFormatedDate } from "@/utils/formatedDate";
+import { processName } from "@/utils/processName.util";
 import React, { useContext, useEffect } from "react";
 
 type ChatMessageProps = {
@@ -43,7 +44,7 @@ const ChatPublicMessage: React.FC<ChatMessageProps> = ({
             <span className="text-lg">{message.content}</span>
             <div className="flex justify-between">
               <span className="text-[14px] text-gray-400">
-                {message.userName}
+                {message.userName && processName(message.userName)}
               </span>
               <span className="text-[14px] text-gray-400">
                 {returnFormatedDate(message.timestamp)}
