@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 
 export const useModal = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [type, setType] = useState<string>("");
 
-  const openModal = () => {
+  const openModal = (value: string) => {
     setIsModalOpen(true);
+    setType(value);
   };
 
   const closeModal = () => {
@@ -13,11 +15,11 @@ export const useModal = () => {
 
   useEffect(() => {
     const handleOutsideClick = (e: any) => {
-      if (isModalOpen && e.target.closest(".modal")) {
-        return;
-      }
+      const modalElement = document.getElementById("modal");
 
-      closeModal();
+      if (isModalOpen && modalElement && !modalElement.contains(e.target)) {
+        closeModal();
+      }
     };
 
     document.addEventListener("click", handleOutsideClick);
@@ -27,5 +29,5 @@ export const useModal = () => {
     };
   }, [isModalOpen]);
 
-  return { isModalOpen, openModal, closeModal };
+  return { isModalOpen, openModal, closeModal, type };
 };

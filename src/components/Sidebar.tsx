@@ -1,69 +1,57 @@
 import { UserContext, UserType } from "@/providers/userContext";
 import UserAutoComplete from "./userAutoComplete";
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext } from "react";
 
 import Image from "next/image";
 import useAvatarUrl from "@/utils/getAvatarForUser";
 
 type SidebarProps = {
-  setIsPublic: (isPublic: boolean) => void;
-  setChatType: (chatType: string) => void;
-  setSelectedUser: (selectedUser: UserType | null) => void;
-  openModal: () => void;
+  allUsers: UserType[];
+  openModal: (value: string) => void;
 };
 
-const Sidebar: FC<SidebarProps> = ({
-  setIsPublic,
-  setChatType,
-  setSelectedUser,
-  openModal,
-}) => {
-  const { findAllUsers, user, getUserAvatar, userLogout } =
-    useContext(UserContext);
-  const [selectedUsersList, setSelectedUsersList] = useState<UserType[]>([]);
-  const [allUsers, setAllUsers] = useState<UserType[]>([]);
+const Sidebar: FC<SidebarProps> = ({ allUsers, openModal }) => {
+  const {
+    user,
+    userLogout,
+    handleGeralClick,
+    handleUserSelect,
+    handleSelectUserList,
+    selectedUsersList,
+  } = useContext(UserContext);
   const avatar = useAvatarUrl(user);
 
-  useEffect(() => {
-    const findAllUser = async () => {
-      const users = await findAllUsers();
-      const filteredUsers = users.filter((u) => u.id !== user.id);
-      setAllUsers(filteredUsers);
-    };
-    findAllUser();
-  }, [user]);
+  // const fetchSelectedUserAvatar = async (user: UserType) => {
+  //   try {
+  //     const response = await getUserAvatar(user.id);
+  //     return response;
+  //   } catch (error) {
+  //     console.error("Error fetching user avatar:", error);
+  //   }
+  // };
 
-  const fetchSelectedUserAvatar = async (user: UserType) => {
-    try {
-      const response = await getUserAvatar(user.id);
-      return response;
-    } catch (error) {
-      console.error("Error fetching user avatar:", error);
-    }
-  };
+  // const handleUserSelect = async (user: UserType | null) => {
+  //   if (user && !selectedUsersList.some((u) => u.id === user.id)) {
+  //     const userWithAvatar = await fetchSelectedUserAvatar(user);
+  //     const newUser = { ...user, userWithAvatar };
+  //     setSelectedUsersList((prevList: any) => [...prevList, newUser]);
+  //   }
 
-  const handleUserSelect = async (user: UserType | null) => {
-    if (user && !selectedUsersList.some((u) => u.id === user.id)) {
-      const userWithAvatar = await fetchSelectedUserAvatar(user);
-      const newUser = { ...user, userWithAvatar };
-      setSelectedUsersList((prevList: any) => [...prevList, newUser]);
-    }
+  //   setSelectedUser(user);
+  //   setIsPublic(false);
+  //   setChatType("private");
+  // };
 
-    setSelectedUser(user);
-    setIsPublic(false);
-    setChatType("private");
-  };
-
-  const handleSelectUserList = (user: UserType) => {
-    setSelectedUser(user);
-    setIsPublic(false);
-    setChatType("private");
-  };
-  const handleGeralClick = () => {
-    setSelectedUser(null);
-    setIsPublic(true);
-    setChatType("public");
-  };
+  // const handleSelectUserList = (user: UserType) => {
+  //   setSelectedUser(user);
+  //   setIsPublic(false);
+  //   setChatType("private");
+  // };
+  // const handleGeralClick = () => {
+  //   setSelectedUser(null);
+  //   setIsPublic(true);
+  //   setChatType("public");
+  // };
 
   return (
     <div className="w-[350px] bg-zinc-900 p-4 !important hidden lg:block h-full">
@@ -80,7 +68,7 @@ const Sidebar: FC<SidebarProps> = ({
                 alt="urlavatar"
                 onClick={(e) => {
                   e.stopPropagation();
-                  openModal();
+                  openModal("avatar");
                 }}
               />
             </div>

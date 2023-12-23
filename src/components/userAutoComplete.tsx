@@ -23,20 +23,23 @@ const UserAutoComplete: React.FC<UserAutoCompleteProps> = ({
     onSelect(selectedUser);
   };
 
-  const options = allUsers.map((user) => ({
+  const options = allUsers?.map((user) => ({
     value: user.id,
     label: user.email,
   }));
   const customStyles = {
-    control: (provided: any) => ({
+    control: (provided: any, state: any) => ({
       ...provided,
-      backgroundColor: "rgb(82 82 91)",
+      backgroundColor: "#d1d5db",
       padding: "10px",
       borderRadius: "4px",
+      outline: "none",
+      borderColor: state.isFocused ? "#FFA500" : "none",
+      boxShadow: state.isFocused ? "#FFA500" : "none",
     }),
     input: (provided: any) => ({
       ...provided,
-      color: "rgb(229 231 235)",
+      color: "#171717",
     }),
   };
 

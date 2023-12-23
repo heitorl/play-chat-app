@@ -5,6 +5,7 @@ import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Cookie from "js-cookie";
 import { UploadedFile } from "@/components/UploadAvatarModal";
+import useAvatarUrl from "@/utils/getAvatarForUser";
 
 export type UserFormData = {
   name?: string;
@@ -33,6 +34,13 @@ type UserContextProps = {
   requestAvatarUpload: (file: FormData) => Promise<void>;
   setImageUploaded: (data: any) => void;
   imageUploaded: any;
+  handleUserSelect: (selectedUser: UserType | null) => Promise<void>;
+  handleSelectUserList: (selectedUser: UserType) => void;
+  handleGeralClick: () => void;
+  chatType: string;
+  isPublic: boolean;
+  selectedUser: UserType | null;
+  selectedUsersList: UserType[];
 };
 
 export type UserType = {
@@ -67,6 +75,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [imageUploaded, setImageUploaded] = useState({});
 
+  const [selectedUsersList, setSelectedUsersList] = useState<UserType[]>([]);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [chatType, setChatType] = useState<string>("public");
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+
+  // const avatar = useAvatarUrl(data.user);
+
   useEffect(() => {
     const token = localStorage.getItem("@TOKEN");
 
@@ -74,6 +89,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         if (token) {
           const response = await api.get(`/user`);
+
+          console.log(response, "ressss123");
 
           setData((prevData) => ({
             access_token: token,
@@ -199,6 +216,42 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const fetchSelectedUserAvatar = async (selectedUser: UserType) => {
+    try {
+      const response = await getUserAvatar(selectedUser.id);
+      return response;
+    } catch (error) {
+      console.error("Error fetching user avatar:", error);
+    }
+  };
+
+  const handleUserSelect = async (selectedUser: UserType | null) => {
+    if (
+      selectedUser &&
+      !selectedUsersList.some((u) => u.id === selectedUser.id)
+    ) {
+      const userWithAvatar = await fetchSelectedUserAvatar(selectedUser);
+      const newUser = { ...selectedUser, userWithAvatar };
+      setSelectedUsersList((prevList) => [...prevList, newUser]);
+    }
+
+    setSelectedUser(selectedUser);
+    setIsPublic(false);
+    setChatType("private");
+  };
+
+  const handleSelectUserList = (selectedUser: UserType) => {
+    setSelectedUser(selectedUser);
+    setIsPublic(false);
+    setChatType("private");
+  };
+
+  const handleGeralClick = () => {
+    setSelectedUser(null);
+    setIsPublic(true);
+    setChatType("public");
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -213,6 +266,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         requestAvatarUpload,
         setImageUploaded,
         imageUploaded,
+        handleUserSelect,
+        handleSelectUserList,
+        handleGeralClick,
+        chatType,
+        isPublic,
+        selectedUser,
+        selectedUsersList,
       }}
     >
       {children}

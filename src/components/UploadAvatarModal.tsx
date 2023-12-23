@@ -92,15 +92,15 @@ const UpdloadAvatar = () => {
   };
 
   return (
-    <div className="flex flex-col  w-[380px] h-[420px] items-center bg-zinc-900 fixed -translate-x-2/4 -translate-y-2/4 z-[1000] shadow-[0px_2px_4px_rgba(0,0,0,0.1)] rounded-[10px] left-2/4 top-2/4;">
+    <div className="flex flex-col items-center bg-zinc-900 fixed -translate-x-2/4 -translate-y-2/4 z-[1000] shadow-[0px_2px_4px_rgba(0,0,0,0.1)] rounded-[10px] left-2/4 top-2/4 w-[320px] lg:w-[380px] h-[420px]">
       <div className="py-4 text-gray-400 font-bold text-xl">
         <h2>Atualize a sua foto de perfil!</h2>
       </div>
-      <div className="w-[350px] h-[180px] relative p-4">
+      <div className="w-[280px] lg:w-[350px] h-[180px] relative p-4">
         {avatarUrl.avatarUrl && (
           <Image
             src={avatarUrl.avatarUrl}
-            className="w-full object-cover"
+            className="w-full"
             fill
             quality={100}
             alt="urlavatar"
@@ -111,7 +111,7 @@ const UpdloadAvatar = () => {
         <div
           id="dropzone"
           {...getRootProps()}
-          className={`border border-dashed w-[350px] mt-6 rounded cursor-pointer bg-zinc-600 transition-[height] ${
+          className={`border border-dashed w-[280px] lg:w-[350px] mt-6 rounded cursor-pointer bg-zinc-600 transition-[height] ${
             isDragActive ? "text-blue-600 border-blue-400" : ""
           } ${isDragReject ? "text-red-500 border-red-400" : ""}`}
         >

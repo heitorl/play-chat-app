@@ -14,7 +14,7 @@ const InputMessage = ({
   };
 
   return (
-    <div className="w-[80%] p-4 flex justify-center">
+    <div className="w-[90%] lg:w-[80%] p-4 flex justify-center">
       <div className="w-full h-20 flex justify-end bg-white relative items-center  rounded-md">
         <input
           type="text"

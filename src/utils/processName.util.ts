@@ -1,5 +1,5 @@
 export function processName(name: string): string {
-  const n = name.split(" ");
+  const n = name?.split(" ");
 
   if (n.length >= 2) {
     return `${n[0]} ${n[1]}`;
